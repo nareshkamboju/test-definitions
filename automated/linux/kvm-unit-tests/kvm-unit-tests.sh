@@ -2,6 +2,7 @@
 set -x
 # shellcheck disable=SC1091
 . ../../lib/sh-test-lib
+# shellcheck disable=SC1091
 . ./setup.sh
 
 OUTPUT="$(pwd)/output"
@@ -87,6 +88,7 @@ fi
 
 if [ "${DEVICE}" = "juno-r2" ]; then
     # Hotplug off juno-r2 's a57 cluster
+    info_msg "offline a57 cluster cpus ..."
     offline_big_cpus
 fi
 
@@ -101,5 +103,6 @@ parse_output
 
 if [ "${DEVICE}" = "juno-r2" ]; then
     # Hotplug on juno-r2 's a57 cluster
+    info_msg "online a57 cluster cpus ..."
     online_big_cpus
 fi
