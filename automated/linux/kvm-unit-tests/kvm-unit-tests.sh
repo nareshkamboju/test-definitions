@@ -45,6 +45,8 @@ kvm_unit_tests_run_test() {
     info_msg "running kvm unit tests ..."
     if [ "${SMP}" = "false" ]; then
         taskset -c 0 ./run_tests.sh -a -v -t | tee -a "${RESULT_LOG}"
+	ls logs/*.log || true
+	cat logs/*.log  || true
     else
         ./run_tests.sh -a -v -t| tee -a "${RESULT_LOG}"
     fi
