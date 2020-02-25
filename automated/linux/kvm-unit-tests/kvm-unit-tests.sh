@@ -50,7 +50,8 @@ kvm_unit_tests_run_test() {
     fi
     # Debug logs
     ls logs/*.log || true
-    cat logs/*.log  || true
+#    cat logs/*.log  || true
+    cat logs/vmx.log || true
 }
 
 kvm_unit_tests_build_test() {
