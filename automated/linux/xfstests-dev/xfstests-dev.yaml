@@ -1,0 +1,41 @@
+metadata:
+    name: xfstests-dev
+    format: "Lava-Test-Shell Test Definition 1.0"
+    description: "Run xfstests-dev test suite"
+
+    maintainer:
+        - naresh.kamboju@linaro.org
+    os:
+        - debian
+        - ubuntu
+        - centos
+        - fedora
+    scope:
+        - functional
+    devices:
+        - dragonboard410c
+        - hi6220-hikey
+        - juno
+        - x15
+        - x86
+    environment:
+        - lava-test-shell
+
+params:
+    TST_CMDFILES: "ext4/quick"
+
+    # SKIPFILE can be a filename from dir ./automated/linux/xfstests-dev/, an http URL,
+    # or a skipgen style yaml file.
+    # Examples:
+    #   SKIPFILE: "http://people.linaro.org/~naresh.kamboju/skipfile"
+    #   SKIPFILE: "skipfile-lkft" 
+    # NOTE: busybox wget may not work with https link so prefer to use http
+    SKIPFILE: ""
+    SKIP_INSTALL: false
+
+
+run:
+    steps:
+        - cd ./automated/linux/xfstests-dev/
+        - ./xfstests-dev.sh -T "${TST_CMDFILES}" -s "${SKIP_INSTALL}" -S "${SKIPFILE}"
+        - ../../utils/send-to-lava.sh ./output/result.txt
