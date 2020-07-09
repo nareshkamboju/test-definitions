@@ -53,14 +53,16 @@ done
 
 # Install xfstests
 install_xfstests() {
-    rm -rf /opt/xfstests-dev
+# TODO
+#    rm -rf /opt/xfstests-dev
     mkdir -p /opt/xfstests-dev
     # shellcheck disable=SC2164
     cd /opt/xfstests-dev
     # shellcheck disable=SC2140
-    git clone https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
+    git clone --depth 1 https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
     # shellcheck disable=SC2164
     cd xfstests-dev
+    cp ${SCRIPTPATH}/local.config .
     make
     make install
 }
@@ -77,13 +79,9 @@ run_xfstests() {
     # shellcheck disable=SC2164
     cd "${XFSTESTS_PATH}"
     # shellcheck disable=SC2174
-    mkdir -m 777 -p "${XFSTESTS_TMPDIR}"
+#    mkdir -m 777 -p "${XFSTESTS_TMPDIR}"
 
-    pipe0_status "./check -d -b  -g ${TST_CMDFILES} \
-                                 -l ${OUTPUT}/XFSTESTS_${LOG_FILE}.log \
-                                 -C ${OUTPUT}/XFSTESTS_${LOG_FILE}.failed \
-                                 -d ${XFSTESTS_TMPDIR} \
-                                    ${SKIPFILE}" "tee ${OUTPUT}/XFSTESTS_${LOG_FILE}.out"
+    pipe0_status "./check -d -b -g ${TST_CMDFILES}" "tee ${OUTPUT}/XFSTESTS_${LOG_FILE}.out"
 #    check_return "xfstest_check_${LOG_FILE}"
 
     parse_xfstests_output "${OUTPUT}/XFSTESTS_${LOG_FILE}.log"
@@ -107,6 +105,11 @@ create_out_dir "${OUTPUT}"
 
 info_msg "About to run XFSTESTS test..."
 info_msg "Output directory: ${OUTPUT}"
+
+###### Remove ######
+ls /opt/* || true
+ls /opt/xfstests-dev || true
+###### End ######
 
 if [ "${SKIP_INSTALL}" = "True" ] || [ "${SKIP_INSTALL}" = "true" ]; then
     info_msg "install_XFSTESTS skipped"
