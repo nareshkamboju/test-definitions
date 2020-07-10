@@ -1,5 +1,7 @@
 #!/bin/sh -e
 
+set -x
+
 # shellcheck disable=SC1091
 . ../../lib/sh-test-lib
 OUTPUT="$(pwd)/output"
@@ -29,6 +31,15 @@ install() {
       unknown) warn_msg "Unsupported distro: package install skipped" ;;
     esac
 }
+
+gcc t.c
+
+a=0
+while [ ${a} -lt 1000000 ]
+do
+   ./a.out
+   a=$((a + 1))
+done
 
 ! check_root && error_msg "You need to be root to run this script."
 create_out_dir "${OUTPUT}"
