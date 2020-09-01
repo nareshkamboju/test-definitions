@@ -75,7 +75,7 @@ install() {
 	dist_name
 	case "${dist}" in
 		debian|ubuntu)
-			pkgs="curl git python3-schedutils python3-pip python3-lxml"
+			pkgs="curl git python3-schedutils python3-pip python3-lxml python3-libxml2"
 			install_deps "${pkgs}" "${SKIP_INSTALL}"
 			;;
 		fedora|centos)
