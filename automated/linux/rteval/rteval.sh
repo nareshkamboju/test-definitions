@@ -149,10 +149,11 @@ run_test() {
 	pushd "$TEST_DIR" || exit 1
 	pushd loadsource || exit 1
 	curl -sSOL ${DOWNLOAD_KERNEL}
+	ls
 	popd
 	sed -ie "s|linux-.*|$(basename ${DOWNLOAD_KERNEL})|" Makefile
 	make install
-	make runit
+	make runit EXTRA="-q"
 }
 
 ! check_root && error_msg "This script must be run as root"
