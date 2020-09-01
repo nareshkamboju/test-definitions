@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # shellcheck disable=SC1091
 . ../../lib/sh-test-lib
 OUTPUT="$(pwd)/output"
