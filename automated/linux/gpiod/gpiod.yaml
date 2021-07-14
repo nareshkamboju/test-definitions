@@ -1,7 +1,12 @@
 metadata:
     name: gpiod
     format: "Lava-Test Test Definition 1.0"
-    description: "Run a gpiod suite"
+    description: "Run a gpiod suite.
+                 Test need these configs
+                 CONFIG_GPIOLIB=y
+                 CONFIG_GPIO_CDEV=y
+                 CONFIG_GPIO_MOCKUP=m
+                "
     maintainer:
         - anders.roxell@linaro.org
         - chase.qi@linaro.org
@@ -13,10 +18,33 @@ metadata:
         - hikey
         - x86
 params:
-    GPIOD_PATH: "/opt/libgpiod/bin/"
+    GPIOD_PATH: "/opt/libgpiod/"
+    SKIP_INSTALL: false
 
+    # If the following parameter is set, then the libgpiod suite is
+    # cloned and used unconditionally. In particular, the version
+    # of the suite is set to the commit pointed to by the
+    # parameter. A simple choice for the value of the parameter
+    # is, e.g., HEAD.  If, instead, the parameter is
+    # not set, then the suite present in TEST_DIRis used.
+    # TEST_PROG_VERSION: "master"
+    TEST_PROG_VERSION: ""
+
+    # If next parameter is set, then the libgpiod suite is cloned
+    # from the URL in TEST_GIT_URL. Otherwise it is cloned from the
+    # standard repository for the suite. Note that cloning is done
+    # only if TEST_PROG_VERSION is not empty
+    # TEST_GIT_URL: "https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git"
+    TEST_GIT_URL: ""
+
+    # If next parameter is set, then the libgpiod suite is cloned to or
+    # looked for in TEST_DIR. Otherwise it is cloned to $(pwd)/libgpiod
+    TEST_DIR: ""
+
+    # If the user space already have everything installed. default: false
+    SKIP_INSTALL: "false"
 run:
     steps:
         - cd ./automated/linux/gpiod
-        - ./gpiod.sh ${GPIOD_PATH}
-        - ../../utils/send-to-lava.sh result.txt
+        - ./gpiod.sh -d "${GPIOD_PATH}" -v "${TEST_PROG_VERSION}" -s "${SKIP_INSTALL}" -p "${TEST_DIR}"  -u "${TEST_GIT_URL}"
+        - ../../utils/send-to-lava.sh ./output/result.txt
