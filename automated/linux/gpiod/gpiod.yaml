@@ -47,4 +47,4 @@ run:
     steps:
         - cd ./automated/linux/gpiod
         - ./gpiod.sh -d "${GPIOD_PATH}" -v "${TEST_PROG_VERSION}" -s "${SKIP_INSTALL}" -p "${TEST_DIR}"  -u "${TEST_GIT_URL}"
-        - ../../utils/send-to-lava.sh result.txt
+        - ../../utils/send-to-lava.sh ./output/result.txt
