@@ -125,10 +125,24 @@ create_out_dir "${OUTPUT}"
 
 export PATH="${GPIOD_PATH}/bin:$PATH"
 which gpiod-test || error_msg "'gpiod-test' not found, exiting..."
-gpiod-test 2>&1| tee tmp.txt
-sed 's/\[[0-9;]*m//g'  tmp.txt \
+gpiod-test 2>&1| tee ${TMP_LOG}
+echo "==================="
+cat "${TMP_LOG}"
+echo "==================="
+sed 's/\[[0-9;]*m//g'  "${TMP_LOG}" \
 	| grep '\[TEST\]' \
 	| sed 's/\[TEST\]//' \
 	| sed -r "s/'//g; s/^ *//; s/-//; s/[^a-zA-Z0-9]/-/g; s/--+/-/g; s/-PASS/ pass/; s/-FAIL/ fail/; s/-SKIP/ skip/; s/-//;" 2>&1 \
-	| tee -a result.txt
-rm tmp.txt
+	| tee -a "${RESULT_FILE}"
+
+echo "==================="
+cat "${RESULT_FILE}"
+echo "==================="
+sed -i -e 's/\// /g' -e 's/:/ /g' -e 's/OK/pass/g' "${RESULT_FILE}"
+awk '{print $3 " " $4}' ${RESULT_FILE}
+
+echo "==================="
+cat "${RESULT_FILE}"
+echo "==================="
+
+rm ${TMP_LOG}
