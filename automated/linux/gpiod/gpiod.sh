@@ -4,6 +4,7 @@
 . ../../lib/sh-test-lib
 OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
+TMP_LOG="${OUTPUT}/tmp.txt"
 
 GPIOD_PATH="/opt/libgpiod/"
 
@@ -12,8 +13,6 @@ TEST_PROG_VERSION=
 TEST_GIT_URL=https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git
 TEST_DIR="$(pwd)/${TEST_PROGRAM}"
 SKIP_INSTALL="false"
-
-export RESULT_FILE
 
 usage() {
 	echo "\
@@ -129,17 +128,14 @@ gpiod-test 2>&1| tee ${TMP_LOG}
 echo "==================="
 cat "${TMP_LOG}"
 echo "==================="
-sed 's/\[[0-9;]*m//g'  "${TMP_LOG}" \
-	| grep '\[TEST\]' \
-	| sed 's/\[TEST\]//' \
-	| sed -r "s/'//g; s/^ *//; s/-//; s/[^a-zA-Z0-9]/-/g; s/--+/-/g; s/-PASS/ pass/; s/-FAIL/ fail/; s/-SKIP/ skip/; s/-//;" 2>&1 \
-	| tee -a "${RESULT_FILE}"
+# sed 's/\[[0-9;]*m//g'  "${TMP_LOG}" \
+#	| grep '\[TEST\]' \
+#	| sed 's/\[TEST\]//' \
+#	| sed -r "s/'//g; s/^ *//; s/-//; s/[^a-zA-Z0-9]/-/g; s/--+/-/g; s/-PASS/ pass/; s/-FAIL/ fail/; s/-SKIP/ skip/; s/-//;" 2>&1 \
+#	| tee -a "${RESULT_FILE}"
 
-echo "==================="
-cat "${RESULT_FILE}"
-echo "==================="
-sed -i -e 's/\// /g' -e 's/:/ /g' -e 's/OK/pass/g' "${RESULT_FILE}"
-awk '{print $3 " " $4}' ${RESULT_FILE}
+sed -i -e 's/\// /g' -e 's/:/ /g' -e 's/OK/pass/g' "${TMP_LOG}"
+awk '{print $3 " " $4}' "${TMP_LOG}" 2>&1 | tee ${RESULT_FILE}
 
 echo "==================="
 cat "${RESULT_FILE}"
