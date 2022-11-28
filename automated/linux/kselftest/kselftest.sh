@@ -23,6 +23,7 @@ TST_CMDFILES=""
 TST_CASENAME=""
 SHARD_NUMBER=1
 SHARD_INDEX=1
+PARSE_OUTPUT_SCRIPT="${SCRIPTPATH}/parse-output.py"
 
 # Architecture-specific tarball name defaults.
 if [ "$(uname -m)" = "aarch64" ]; then
@@ -128,34 +129,8 @@ fi
 
 
 parse_output() {
-    perl -ne '
-    if (m|^# selftests: (.*)$|) {
-	$testdir = $1;
-	$testdir =~ s|[:/]\s*|.|g;
-    } elsif (m|^(?:# )*(not )?ok (?:\d+) ([^#]+)(# (SKIP)?)?|) {
-        $not = $1;
-        $test = $2;
-        $skip = $4;
-        $test =~ s|\s+$||;
-        # If the test name starts with "selftests: " it is "fully qualified".
-        if ($test =~ /selftests: (.*)/) {
-            $test = $1;
-	    $test =~ s|[:/]\s*|.|g;
-        } else {
-            # Otherwise, it likely needs the testdir prepended.
-            $test = "$testdir.$test";
-        }
-        # Any appearance of the SKIP is a skip.
-        if ($skip eq "SKIP") {
-            $result="skip";
-        } elsif ($not eq "not ") {
-            $result="fail";
-        } else {
-            $result="pass";
-        }
-	print "$test $result\n";
-    }
-' "${LOGFILE}" >> "${RESULT_FILE}"
+    test_log_file="$1"
+    python3 "${PARSE_OUTPUT_SCRIPT}" < "${test_log_file}" | tee -a "${RESULT_FILE}"
 }
 
 install() {
@@ -235,4 +210,4 @@ elif [ -n "${TST_CMDFILES}" ]; then
 else
     ./run_kselftest.sh 2>&1 | tee "${LOGFILE}"
 fi
-parse_output
+parse_output  "${LOGFILE}"
