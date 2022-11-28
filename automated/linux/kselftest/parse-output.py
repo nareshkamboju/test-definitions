@@ -5,7 +5,7 @@ import re
 
 def slugify(line):
     non_ascii_pattern = r"[^A-Za-z0-9_-]+"
-    return re.sub(non_ascii_pattern, "", line)
+    return re.sub(non_ascii_pattern, "-", line)
 
 
 tests = ""
