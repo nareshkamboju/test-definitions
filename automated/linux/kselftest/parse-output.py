@@ -22,7 +22,7 @@ for line in sys.stdin:
     elif not totals and re.search(r"^.* ok \d{1,5} ", line):
         match = re.match(r"^.* ok \d{1,5} (.*?)$", line)
         if "# SKIP" in match.group(1):
-            ascii_test_line = slugify(match.group(1).split("# SKIP")[0])
+            ascii_test_line = slugify(match.group(1).split("# SKIP")[1])
             print(f"{tests}_{ascii_test_line} skip")
         else:
             ascii_test_line = slugify(match.group(1))
