@@ -5,13 +5,13 @@ import re
 
 def slugify(line):
     non_ascii_pattern = r"[^A-Za-z0-9_-]+"
-    return re.sub(non_ascii_pattern, "-", line)
+    return re.sub(r"_-", "_", re.sub(r"_$", "", re.sub(non_ascii_pattern, "_", line)))
 
 
 tests = ""
 for line in sys.stdin:
     totals = False
-    if "# Subtest: " in line:
+    if "# selftests: " in line or "# Subtest: " in line:
         tests = line.replace("\n", "").split(":")[1]
     elif "# Totals: pass:" in line:
         totals = True
