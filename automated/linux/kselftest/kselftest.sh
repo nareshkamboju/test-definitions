@@ -130,7 +130,7 @@ fi
 
 parse_output() {
     test_log_file="$1"
-    python3 "${PARSE_OUTPUT_SCRIPT}" < "${test_log_file}" | tee -a "${RESULT_FILE}"
+    python3 "${PARSE_OUTPUT_SCRIPT}" < "${test_log_file}" |  uniq | tee -a "${RESULT_FILE}"
 }
 
 install() {
