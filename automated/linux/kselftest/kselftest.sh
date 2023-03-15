@@ -190,6 +190,8 @@ rm -f "${skips}"
 
 if [ -n "${TST_CASENAME}" ]; then
     ./run_kselftest.sh -t "${TST_CASENAME}" 2>&1 | tee -a "${LOGFILE}"
+    ls logs/*/*
+    cat logs/*/*event-filter-function*
 elif [ -n "${TST_CMDFILES}" ]; then
     cp kselftest-list.txt kselftest-list.txt.original
     # shellcheck disable=SC2086
@@ -202,10 +204,14 @@ elif [ -n "${TST_CMDFILES}" ]; then
         echo "===========End Tests to run ==============="
         cp shardfile kselftest-list.txt
         ./run_kselftest.sh -c ${test} 2>&1 | tee -a "${LOGFILE}"
+        ls logs/*/*
+        cat logs/*/*event-filter-function*
     done
     cp kselftest-list.txt.original kselftest-list.txt
 else
     ./run_kselftest.sh 2>&1 | tee "${LOGFILE}"
+    ls logs/*/*
+    cat logs/*/*event-filter-function*
 fi
 # shellcheck disable=SC2164
 cd "$saved_pwd" || exit
