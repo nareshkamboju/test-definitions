@@ -27,7 +27,17 @@ while getopts "s:m:g:h" o; do
 done
 
 parse_output() {
+    echo "head and tail of results log"
+    head "${RESULT_LOG}"
+    tail "${RESULT_LOG}"
+    # Remove first line "TAP version 13"
+    sed -i '1d' "${RESULT_LOG}"
+    # Remove last line "1..136"
+    sed -i '$d' "${RESULT_LOG}"
     ./parse-output.py < "${RESULT_LOG}" >> "${RESULT_FILE}"
+    echo "head and tail of results file"
+    head "${RESULT_FILE}"
+    tail "${RESULT_FILE}"
 }
 
 kvm_unit_tests_run_test() {
