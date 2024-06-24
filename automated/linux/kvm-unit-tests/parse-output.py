@@ -2,53 +2,7 @@
 
 import sys
 import re
-
-
-def parse_input_file():
-    """
-    Reads lines from the standard input.
-
-    Returns:
-        list: A list of lines read from the input.
-    """
-    try:
-        lines = sys.stdin.readlines()
-        return lines
-    except Exception as e:
-        sys.stderr.write(f"Error reading input: {e}\n")
-        sys.exit(1)
-
-
-def parse_line(line):
-    """
-    Parses a single line of input to extract the test result and description.
-
-    Args:
-        line (str): A single line of input.
-
-    Returns:
-        tuple: A tuple containing the result and description.
-    """
-    parts = line.split(" ", 2)
-    if len(parts) < 3:
-        raise ValueError(f"Invalid line format: {line}")
-
-    status = parts[0]
-    description = parts[2].strip()
-
-    if status == "ok":
-        result = "pass"
-    elif status == "not" and parts[1] == "ok":
-        result = "fail"
-        description = parts[2].split(" ", 1)[1].strip()
-    else:
-        result = "unknown"
-
-    if "# skip" in description.lower():
-        result = "skip"
-        description = description.split("# skip")[0].strip()
-
-    return result, description
+import tap
 
 
 def sanitize_description(description):
@@ -92,15 +46,21 @@ def main():
     Main function to parse input, process each line, and output the results.
     """
     try:
-        lines = parse_input_file()
-        for line in lines:
-            try:
-                result, description = parse_line(line)
-                formatted_line = format_output(result, description)
-                sys.stdout.write(formatted_line)
-            except ValueError as e:
-                sys.stderr.write(f"Error processing line: {e}\n")
-                continue
+        plan = tap.parser.Parser()
+        test_cases = plan.parse_stream(sys.stdin)
+
+        for test_case in test_cases:
+            if test_case.ok:
+                result = "pass"
+            elif test_case.skip:
+                result = "skip"
+            else:
+                result = "fail"
+
+            description = test_case.description or ""
+            formatted_line = format_output(result, description)
+            sys.stdout.write(formatted_line)
+
     except Exception as e:
         sys.stderr.write(f"Unexpected error: {e}\n")
         sys.exit(1)
