@@ -17,7 +17,7 @@ usage() {
     exit 1
 }
 
-while getopts ":D:w:i" opt; do
+while getopts ":D:w:i:" opt; do
     case "${opt}" in
         D) DURATION="${OPTARG}" ;;
 	w) BACKGROUND_CMD="${OPTARG}" ;;
